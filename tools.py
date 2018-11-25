@@ -4,9 +4,8 @@
 #  tools.py
 #
 #  Copyright 2018 roman <roman@roman-pc>
-#
+# берем список файлов, получаем абс пути, получаем хэши
 from os import walk, path
-#import sys
 from hashlib import md5
 
 p = '/home/roman/gits/localbase'
@@ -40,9 +39,10 @@ def list_selected_file(a=a):
 
 lf = list_selected_file()
 #print(type(lf))
-
+'''
 for i in lf:
     print(i)
     a = return_hash_file(i)
     print(a + '\n')
 
+'''
