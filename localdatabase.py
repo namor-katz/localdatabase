@@ -8,9 +8,10 @@
 
 from peewee import *
 from tools import *
+import sys
+from os import path
 
 db = SqliteDatabase('localdatabase.db')
-
 
 class InfoFile(Model):
     name = CharField()
@@ -39,16 +40,17 @@ def add_values(fname):
     )
     new_value.save()
     
-    
-camas = InfoFile(
-    name ='camasutra',
-    path ='no path',
-    hash_f = 'no hash',
-    tag = 'notag',
-    type = 'pdf',
-    read = 'f',
-    double = 'f'    
-)
-    
+def get_of_list(list_files):
+    pass
 
-#camas.save()
+if __name__ == '__main__':
+    a = sys.argv[1]
+    if path.isdir(a) == True:
+        b = list_files_raw(a)
+        #print(b)
+        c = list_selected_file(b)
+        for i in c:
+            add_values(i)
+        #print(c)
+    else:
+        print('э, это не директория!')
