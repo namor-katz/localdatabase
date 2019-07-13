@@ -7,12 +7,10 @@
 # нужно: получить полные пути ко всем файлам.
 
 from peewee import *
-import tools
-import sys
+from tools import *
 
-
-# define database settings
 db = SqliteDatabase('localdatabase.db')
+
 
 class InfoFile(Model):
     name = CharField()
@@ -27,33 +25,31 @@ class InfoFile(Model):
     class Meta:
         database = db
 
-
-# create db and table
+#create db and table
 db.create_tables([InfoFile])
 
-# getters and setters
 def add_values(fname):
-    '''принимаем полный путь, получаем инфу, привлекая функции of tools.
-    save data in sqlite database'''
     new_value = InfoFile(
-        name = fname.split('/')[-1],
-        full_path = fname,
-        file_hash = tools.return_hash_file(fname),
-        file_type = tools.get_file_type,
-        tag = None,
-        read = 0,
-        double = None
+    name = fname.split('/')[-1],
+    full_path = fname,
+    file_hash = return_hash_file(fname),
+    tag = 'No tag',
+    file_type = 'No type',
+    read = 'f',
+    double = 'f'
     )
     new_value.save()
+    
+    
+camas = InfoFile(
+    name ='camasutra',
+    path ='no path',
+    hash_f = 'no hash',
+    tag = 'notag',
+    type = 'pdf',
+    read = 'f',
+    double = 'f'    
+)
+    
 
-
-def get_data(name):
-    '''принять имя, отдать всю инфу'''
-    pass
-
-
-if __name__ == '__main__':
-    dir_path = sys.argv[1]
-    files_list = tools.get_dir_content(dir_path)
-    for i in files_list:
-        print(i)
+#camas.save()

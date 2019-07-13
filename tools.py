@@ -20,17 +20,20 @@ def return_hash_file(fname):
     return hash_md5.hexdigest()
 
 
+
 def get_dir_content(full_path):
     '''принять путь к дире, вернуть ейные полные пути'''
     path_to_files = []
+        
     for root, dirs, files in os.walk(full_path):
         for f in files:
             file_path = os.path.join(root, f)
             path_to_files.append(file_path)
 
         for d in dirs:
-            dir_path = os.path.join(root, d)
-            get_dir_content(dir_path)
+            d = os.path.join(root, d)
+            #get_dir_content(dir_path)
+            print(d)
 
         return path_to_files
 
@@ -51,4 +54,5 @@ def get_file_type(full_path):
 
 
 if __name__ == '__main__':
-    pass
+    dir_path = sys.argv[1]
+    a = get_dir_content(dir_path)
