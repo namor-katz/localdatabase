@@ -5,10 +5,11 @@
 #
 #  Copyright 2018 roman <roman@roman-pc>
 # берем список файлов, получаем абс пути, получаем хэши
-from os import walk, path
+import os
+import sys
 from hashlib import md5
+import magic
 
-p = '/home/roman/gits/localbase'
 
 def return_hash_file(fname):
     '''get selected file, return string md5sum'''
@@ -18,32 +19,36 @@ def return_hash_file(fname):
             hash_md5.update(chunk)
     return hash_md5.hexdigest()
 
-def list_files_raw(path_to_dirs):
-    '''create list all files, dirs and any objects'''
-    f = []
-    for i in walk(path_to_dirs):
-        f.append(i)
-        #f.append('neP')
-    return f
 
-a = list_files_raw(p)
-
-def list_selected_file(a=a):
-    ''' да, именно это возвращает полные пути.'''
-    path_f = []
-    for d, dirs, files in a:
+def get_dir_content(full_path):
+    '''принять путь к дире, вернуть ейные полные пути'''
+    path_to_files = []
+    for root, dirs, files in os.walk(full_path):
         for f in files:
-            path1 = path.join(d,f)
-            path_f.append(path1)
-    return path_f
+            file_path = os.path.join(root, f)
+            path_to_files.append(file_path)
+
+        for d in dirs:
+            dir_path = os.path.join(root, d)
+            get_dir_content(dir_path)
+
+        return path_to_files
 
 
-lf = list_selected_file()
-#print(type(lf))
-'''
-for i in lf:
-    print(i)
-    a = return_hash_file(i)
-    print(a + '\n')
+def get_file_size(full_path):
+    '''принять полный путь, вернуть размер'''
+    return os.path.getsize(full_path)
 
-'''
+
+def get_file_type(full_path):
+    ''' принять полный путь, вернуть тип файла.
+    если не получилось вернуть отсутствие значения'''
+    try:
+        file_type = magic.from_file(full_path)
+        return file_type
+    except:
+        return None
+
+
+if __name__ == '__main__':
+    pass

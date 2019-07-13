@@ -7,53 +7,53 @@
 # нужно: получить полные пути ко всем файлам.
 
 from peewee import *
-from tools import *
+import tools
 import sys
-from os import path
 
+
+# define database settings
 db = SqliteDatabase('localdatabase.db')
 
 class InfoFile(Model):
     name = CharField()
-    path = CharField()
-    hash_f = CharField()
+    full_path = CharField()
+    file_hash = CharField()
+    file_size = CharField()
+    file_type = CharField()
     tag = CharField()
-    type = CharField()
     read = BooleanField()
     double = BooleanField()
 
     class Meta:
         database = db
 
-#create db and table
+
+# create db and table
 db.create_tables([InfoFile])
 
+# getters and setters
 def add_values(fname):
+    '''принимаем полный путь, получаем инфу, привлекая функции of tools.
+    save data in sqlite database'''
     new_value = InfoFile(
-    name = fname.split('/')[-1],
-    path = fname,
-    hash_f = return_hash_file(fname),
-    tag = 'No tag',
-    type = 'No type',
-    read = 'f',
-    double = 'f'
+        name = fname.split('/')[-1],
+        full_path = fname,
+        file_hash = tools.return_hash_file(fname),
+        file_type = tools.get_file_type,
+        tag = None,
+        read = 0,
+        double = None
     )
     new_value.save()
-    
-def get_of_list(list_files):
+
+
+def get_data(name):
+    '''принять имя, отдать всю инфу'''
     pass
 
+
 if __name__ == '__main__':
-    a = sys.argv[1]
-    if path.isdir(a) == True:
-        b = list_files_raw(a)
-        print(b)
-        print(type(b))
-        '''
-        c = list_selected_file(b)
-        for i in c:
-            add_values(i)
-        #print(c)
-    else:
-        print('э, это не директория!')
-'''
+    dir_path = sys.argv[1]
+    files_list = tools.get_dir_content(dir_path)
+    for i in files_list:
+        print(i)
