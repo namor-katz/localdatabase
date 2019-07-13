@@ -47,10 +47,13 @@ if __name__ == '__main__':
     a = sys.argv[1]
     if path.isdir(a) == True:
         b = list_files_raw(a)
-        #print(b)
+        print(b)
+        print(type(b))
+        '''
         c = list_selected_file(b)
         for i in c:
             add_values(i)
         #print(c)
     else:
         print('э, это не директория!')
+'''

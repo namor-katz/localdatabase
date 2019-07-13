@@ -29,6 +29,7 @@ def list_files_raw(path_to_dirs):
 a = list_files_raw(p)
 
 def list_selected_file(a=a):
+    ''' да, именно это возвращает полные пути.'''
     path_f = []
     for d, dirs, files in a:
         for f in files:
