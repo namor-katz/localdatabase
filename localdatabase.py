@@ -9,6 +9,12 @@
 from peewee import *
 from tools import *
 
+
+key_words = ['sql', 'python', 'docker', 'java', 'c', 'c++', 'ruby',
+    'sqlite', 'postgresql', 'mongodb', 'machin learning', 'AI', 'django',
+    'flask', 'linux', 'aws', 'freebsd', 'unix', 'bash',  'orm',  'golang', 
+    'go',  'sqlalchemy']
+
 db = SqliteDatabase('localdatabase.db')
 
 
@@ -18,6 +24,7 @@ class BaseModel(Model):
 
 
 class InfoFile(BaseModel):
+    ''' тут у нас инфа о файле '''
     name = CharField()
     full_path = CharField()
     file_hash = CharField()
@@ -29,19 +36,22 @@ class InfoFile(BaseModel):
     notes = TextField(default=None, null=True)
     read = BooleanField(default=False)
     double = BooleanField(default=False)
+    assessment = IntegerField(default=None, null=True)
 
 
 class Author(BaseModel):
+    '''автор, опционально'''
     name = CharField(default=None, null=True)
 
 
 class Technology(BaseModel):
+    ''' технология, например питон, уровень, например средний'''
     tecnology = CharField(default=None, null=True)
     level = IntegerField(default=None, null=True)
 
 
 class Book(BaseModel):
-    
+    ''' книга как абстракция '''
     fname_id = ForeignKeyField(InfoFile, related_name='book', unique=False)
     fname = CharField()
     #author = ForeignKeyField(Author, related_name='author', unique=False)
@@ -52,14 +62,15 @@ class Book(BaseModel):
 
 def add_values(fname):
     print(fname)
-    
+
     new_value = InfoFile(
     name = fname.split('/')[-1],
     full_path = fname,
     file_hash = return_hash_file(fname),
+    file_size = get_file_size(fname),
     file_type = get_file_type(fname),
     file_lang = check_ru_lang(fname),
-    file_size = get_file_size(fname),
+    page_count = get_file_content(fname)[1],
     tag = None,
     read = 0,
     double = 0

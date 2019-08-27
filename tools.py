@@ -51,6 +51,7 @@ def get_file_type(full_path):
 def check_ru_lang(fname):
     ''' берем имя файла, проверяем все что выше ascii, если есть, 
     возвращаем True, название русское, скорее всего и книга руссиш '''
+    #TODO проверять также что в тексте. рус или енгл
     check_result = []
     for i in fname:
         if ord(i) > 128:
@@ -62,7 +63,7 @@ def check_ru_lang(fname):
         return 'en'
 
 
-def get_file_content(fpath):
+def get_file_content(fname):
     '''принять путь к пдфине, извлечь метадату, вернуть титл и число страниц'''
     try:
         with open(fname, 'rb') as f:
@@ -77,14 +78,15 @@ def get_file_content(fpath):
 if __name__ == '__main__':
     dir_path = sys.argv[1]
     main_list = []
-    '''
+
     for entry in scantree(dir_path):
-        main_list.append(entry.path)
+        if os.path.isfile(entry.path):
+            main_list.append(entry.path)
     '''
     for root, dirs, files in os.walk(dir_path):
         for f in files:
             file_path = os.path.join(root, f)
             if os.path.exists(file_path):
                 main_list.append(file_path)
-
+'''
     print(len(main_list))
