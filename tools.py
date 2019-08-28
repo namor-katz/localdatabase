@@ -49,14 +49,14 @@ def get_file_type(full_path):
 
 
 def check_ru_lang(fname):
-    ''' берем имя файла, проверяем все что выше ascii, если есть, 
+    ''' берем имя файла, проверяем все что выше ascii, если есть,
     возвращаем True, название русское, скорее всего и книга руссиш '''
     #TODO проверять также что в тексте. рус или енгл
     check_result = []
     for i in fname:
         if ord(i) > 128:
             check_result.append(1)
-    
+
     if 1 in check_result:
         return 'ru'
     else:
