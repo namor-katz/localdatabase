@@ -1,4 +1,5 @@
 python-magic
-peewee
 PyPDF2
-
+Flask-SQLAlchemy
+ipython
+Flask
