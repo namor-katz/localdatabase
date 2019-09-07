@@ -21,7 +21,7 @@ key_words = ['AI', 'algoritms', 'aws', 'bash', 'c', 'c++', 'cryptography',
  'django', 'docker', 'english', 'flask', 'freebsd', 'go', 'golang',
  'haskell', 'java', 'linux', 'machin learning', 'mongodb', 'mysql',
  'oracle', 'orm', 'php', 'postgresql', 'python', 'ruby', 'sql', 'sqlalchemy',
- 'sqlite', 'svg', 'unix']
+ 'sqlite', 'svg', 'unix', 'mobile', 'vba', 'exel']
 
 enable_extension = ['pdf', 'doc', 'djavu', 'txt', 'odt', 'docx', 'epub']
 archive_extension = ['zip', 'rar', 'tar', '7z']
