@@ -11,10 +11,12 @@ import logging
 from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey,  Boolean
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import scoped_session, sessionmaker
 
 engine = create_engine('sqlite:///new.db', echo=True)
+#обязательно нужно создавать сессию. без неё никак!
+session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
-
 
 
 key_words = ['AI', 'algoritms', 'aws', 'bash', 'c', 'c++', 'cryptography',
@@ -26,6 +28,7 @@ key_words = ['AI', 'algoritms', 'aws', 'bash', 'c', 'c++', 'cryptography',
 enable_extension = ['pdf', 'doc', 'djavu', 'txt', 'odt', 'docx', 'epub']
 archive_extension = ['zip', 'rar', 'tar', '7z']
 exclude_extensions = ['mp4', 'mp3']
+
 
 '''
 class InfoFile(BaseModel):
@@ -113,27 +116,29 @@ def add_values(fname):
         if fname.endswith(i) is True:
             next_step = True
 
-
     if next_step is True:
         print(fname)
 
         new_value = InfoFile(
-        name = fname.split('/')[-1],
-        full_path = fname,
-        file_hash = return_hash_file(fname),
-        file_size = get_file_size(fname),
-        file_type = get_file_type(fname),
-        file_lang = check_ru_lang(fname),
-        page_count = get_file_content(fname)[1],
-        tag = None,
-        read = 0,
-        double = 0
+            name = fname.split('/')[-1],
+            full_path = fname,
+            file_hash = return_hash_file(fname),
+            file_size = get_file_size(fname),
+            file_type = get_file_type(fname),
+            file_lang = check_ru_lang(fname),
+            page_count = get_file_content(fname)[1],
+            tag = None,
+            read = 0,
+            double = 0
                             )
+        print("I run new value!")
         #если размер нулевой, ибо у меня есть битые файлы, не пишем, либо пишем в отдельную таблицу. где только путь
         if new_value.file_size == 0:
-            print('no added {}'.format(new_value.name))
+            print('no added {}'.format(new_value.name)) #TODOS logging
         else:
-            new_value.save()
+            #new_value.save() # this is from peewe
+            session.add(new_value)
+            session.commit()
 
 '''
         new_value2 = Book(
@@ -144,11 +149,10 @@ def add_values(fname):
 '''
 
 if __name__ == '__main__':
-    print('ff')
     # Создание таблицы
     Base.metadata.create_all(engine)
-    '''
-    db.create_tables([InfoFile, Author, Technology, Book])
+    
+    #db.create_tables([InfoFile, Author, Technology, Book])
     dir_path = sys.argv[1]
     main_list = []
     for entry in scantree(dir_path):
@@ -156,4 +160,4 @@ if __name__ == '__main__':
 
     for i in main_list:
         add_values(i)
-'''
+
