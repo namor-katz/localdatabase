@@ -10,7 +10,7 @@ import sys
 from hashlib import md5
 import magic
 import PyPDF2
-
+from localdatabase import key_words
 
 # works files
 def return_hash_file(fname):
@@ -79,6 +79,13 @@ def get_file_content(fname):
         return None, None
 
 
+#мдя. вот чего прлетит первое, то и впишет. (
+def get_tag(fname):
+    for i in key_words:
+        if i in fname:
+            return i
+
+
 if __name__ == '__main__':
     dir_path = sys.argv[1]
     main_list = []
@@ -93,4 +100,4 @@ if __name__ == '__main__':
             if os.path.exists(file_path):
                 main_list.append(file_path)
 '''
-    print(len(main_list))
+    #print(len(main_list))

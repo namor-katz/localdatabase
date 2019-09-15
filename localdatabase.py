@@ -6,6 +6,7 @@
 #  Copyright 2018 roman <roman@roman-pc>
 # нужно: получить полные пути ко всем файлам.
 
+import os
 from tools import *
 import logging
 from sqlalchemy import create_engine
@@ -13,43 +14,24 @@ from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey,  Bo
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+#created db
 engine = create_engine('sqlite:///new.db', echo=True)
 #обязательно нужно создавать сессию. без неё никак!
 session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
-
+# define variables
 key_words = ['AI', 'algoritms', 'aws', 'bash', 'c', 'c++', 'cryptography',
  'django', 'docker', 'english', 'flask', 'freebsd', 'go', 'golang',
  'haskell', 'java', 'linux', 'machin learning', 'mongodb', 'mysql',
  'oracle', 'orm', 'php', 'postgresql', 'python', 'ruby', 'sql', 'sqlalchemy',
  'sqlite', 'svg', 'unix', 'mobile', 'vba', 'exel']
 
-enable_extension = ['pdf', 'doc', 'djavu', 'txt', 'odt', 'docx', 'epub']
+enable_extension = ['pdf', 'doc', 'djvu', 'txt', 'odt', 'docx', 'epub']
 archive_extension = ['zip', 'rar', 'tar', '7z']
 exclude_extensions = ['mp4', 'mp3']
 
-
-'''
-class InfoFile(BaseModel):
-    name = CharField()
-    full_path = CharField()
-    file_hash = CharField()
-    file_size = CharField()
-    file_type = CharField(default=None, null=True)
-    file_lang = CharField(default=None, null=True)
-    page_count = CharField(default=None, null=True)
-    tag = TextField(null=True)
-    notes = TextField(default=None, null=True)
-    read = BooleanField(default=False)
-    double = BooleanField(default=False)
-    assessment = IntegerField(default=None, null=True)
-'''
-'''
-class Author(BaseModel):
-    #\'\'\'автор, опционально'\'\'\
-    name = CharField(default=None, null=True)
-'''
+#define classes
 class InfoFile(Base):
     ''' и вот наша таблица с инфо о файле'''
     __tablename__ = 'info_file'
@@ -106,39 +88,47 @@ class BrokenFiles(BaseModel):
     name = CharField()
     full_path = CharField()
 '''
-#create db and table
-#db.create_tables([InfoFile, Author, Technology, Book])
 
-def add_values(fname):
+def get_hash(fname):
+    pass
+
+
+def add_values(farray):
     #проверяем, стоит ли вообще файл парсить.
-    next_step = False
-    for i in enable_extension:
-        if fname.endswith(i) is True:
-            next_step = True
+    new_files = []
+    for fname in farray:
 
-    if next_step is True:
-        print(fname)
+        next_step = False
+        for i in enable_extension:
+            if fname.endswith(i) is True:
+                next_step = True
 
-        new_value = InfoFile(
-            name = fname.split('/')[-1],
-            full_path = fname,
-            file_hash = return_hash_file(fname),
-            file_size = get_file_size(fname),
-            file_type = get_file_type(fname),
-            file_lang = check_ru_lang(fname),
-            page_count = get_file_content(fname)[1],
-            tag = None,
-            read = 0,
-            double = 0
-                            )
-        print("I run new value!")
-        #если размер нулевой, ибо у меня есть битые файлы, не пишем, либо пишем в отдельную таблицу. где только путь
-        if new_value.file_size == 0:
-            print('no added {}'.format(new_value.name)) #TODOS logging
-        else:
-            #new_value.save() # this is from peewe
-            session.add(new_value)
-            session.commit()
+        if next_step is True:
+            #print(fname)
+
+            new_value = InfoFile(
+                name = fname.split('/')[-1],
+                full_path = fname,
+                file_hash = return_hash_file(fname),
+                file_size = get_file_size(fname),
+                file_type = get_file_type(fname),
+                file_lang = check_ru_lang(fname),
+                page_count = get_file_content(fname)[1],
+                tag = None, #get_tag(fname),
+                read = False,
+                double = None
+                                )
+            #если размер нулевой, ибо у меня есть битые файлы, не пишем, либо пишем в отдельную таблицу. где только путь
+            if new_value.file_size == 0:
+                print('no added {}'.format(new_value.name)) #TODOS logging
+            else:
+                #new_value.save() # this is from peewe
+                new_files.append(new_value)
+
+        for i in new_files:
+            session.add(i)
+
+    session.commit()
 
 '''
         new_value2 = Book(
@@ -151,13 +141,9 @@ def add_values(fname):
 if __name__ == '__main__':
     # Создание таблицы
     Base.metadata.create_all(engine)
-    
-    #db.create_tables([InfoFile, Author, Technology, Book])
     dir_path = sys.argv[1]
     main_list = []
     for entry in scantree(dir_path):
         main_list.append(entry.path)
-
-    for i in main_list:
-        add_values(i)
-
+    
+    add_values(main_list)
