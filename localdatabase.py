@@ -9,7 +9,7 @@
 from tools import *
 import logging
 from sqlalchemy import create_engine
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey
+from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey,  Boolean
 from sqlalchemy.ext.declarative import declarative_base
 
 engine = create_engine('sqlite:///new.db', echo=True)
@@ -47,6 +47,23 @@ class Author(BaseModel):
     #\'\'\'автор, опционально'\'\'\
     name = CharField(default=None, null=True)
 '''
+class InfoFile(Base):
+    ''' и вот наша таблица с инфо о файле'''
+    __tablename__ = 'info_file'
+    id = Column(Integer,  primary_key=True)
+    name = Column(String,  index=True)
+    full_path = Column(String)
+    file_hash = Column(String,  index=True)
+    file_size = Column(String) # may be, int?
+    file_type = Column(String)
+    file_lang = Column(String)
+    page_count = Column(Integer)
+    tag = Column(String)
+    notes = Column(String) # это чарфилд или текстфилд?
+    read = Column(Boolean)
+    double = Column(Boolean)
+    assessment = Column(Integer) # 1-5
+
 
 class Author(Base):
     '''тот же автор, вид сбоку'''
@@ -66,6 +83,7 @@ class Technology(Base):
     id = Column(Integer, primary_key=True)
     technology = Column(String)
     level = Column(String)
+
 
 '''
 class Technology2(BaseModel):
