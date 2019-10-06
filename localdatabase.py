@@ -28,8 +28,9 @@ key_words = ['AI', 'algoritms', 'aws', 'bash', 'c', 'c++', 'cryptography',
  'sqlite', 'svg', 'unix', 'mobile', 'vba', 'exel']
 
 enable_extension = ['pdf', 'doc', 'djvu', 'txt', 'odt', 'docx', 'epub']
-archive_extension = ['zip', 'rar', 'tar', '7z']
+archive_extension = ['zip', 'rar', 'tar', '7z', 'gz', 'bz2']
 exclude_extensions = ['mp4', 'mp3']
+name_prefix = '1Sf' # для помечания уже отработанных файлов
 
 #define classes
 class InfoFile(Base):
