@@ -71,6 +71,18 @@ class Technology(Base):
     level = Column(String)
 
 
+def get_exist_files():
+    ''' 
+    return list full_path all exist files
+    retyrn type: list
+    '''
+    exist_list = []
+    for row in session.query(InfoFile).order_by(InfoFile.id):
+        exist_list.append(row.full_path)
+        
+    return exist_list
+    
+    
 '''
 class Technology2(BaseModel):
     tecnology = CharField(default=None, null=True)
@@ -94,37 +106,41 @@ def get_hash(fname):
     pass
 
 
-def add_values(farray):
+def add_values(farray, exist_list):
     #проверяем, стоит ли вообще файл парсить.
     new_files = []
+    
+    
     for fname in farray:
+        if fname in exist_list:
+            print("ёба")
+        else:
+            next_step = False
+            for i in enable_extension:
+                if fname.endswith(i) is True:
+                    next_step = True
 
-        next_step = False
-        for i in enable_extension:
-            if fname.endswith(i) is True:
-                next_step = True
+            if next_step is True:
+                #print(fname)
 
-        if next_step is True:
-            #print(fname)
-
-            new_value = InfoFile(
-                name = fname.split('/')[-1],
-                full_path = fname,
-                file_hash = return_hash_file(fname),
-                file_size = get_file_size(fname),
-                file_type = get_file_type(fname),
-                file_lang = check_ru_lang(fname),
-                page_count = get_file_content(fname)[1],
-                tag = None, #get_tag(fname),
-                read = False,
-                double = None
-                                )
-            #если размер нулевой, ибо у меня есть битые файлы, не пишем, либо пишем в отдельную таблицу. где только путь
-            if new_value.file_size == 0:
-                print('no added {}'.format(new_value.name)) #TODOS logging
-            else:
-                #new_value.save() # this is from peewe
-                new_files.append(new_value)
+                new_value = InfoFile(
+                    name = fname.split('/')[-1],
+                    full_path = fname,
+                    file_hash = return_hash_file(fname),
+                    file_size = get_file_size(fname),
+                    file_type = get_file_type(fname),
+                    file_lang = check_ru_lang(fname),
+                    page_count = get_file_content(fname)[1],
+                    tag = None, #get_tag(fname),
+                    read = False,
+                    double = None
+                                    )
+                #если размер нулевой, ибо у меня есть битые файлы, не пишем, либо пишем в отдельную таблицу. где только путь
+                if new_value.file_size == 0:
+                    print('no added {}'.format(new_value.name)) #TODOS logging
+                else:
+                    #new_value.save() # this is from peewe
+                    new_files.append(new_value)
 
         for i in new_files:
             session.add(i)
@@ -142,9 +158,12 @@ def add_values(farray):
 if __name__ == '__main__':
     # Создание таблицы
     Base.metadata.create_all(engine)
+    
+    exist_list = get_exist_files()
+
     dir_path = sys.argv[1]
     main_list = []
     for entry in scantree(dir_path):
         main_list.append(entry.path)
     
-    add_values(main_list)
+    add_values(main_list, exist_list)
