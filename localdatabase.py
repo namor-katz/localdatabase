@@ -3,7 +3,7 @@
 #
 #  localdatabase.py
 #
-#  Copyright 2018 roman <roman@roman-pc>
+#  Copyright 2019 roman <namor925@gmail.com>
 # нужно: получить полные пути ко всем файлам.
 
 import os
@@ -20,6 +20,20 @@ engine = create_engine('sqlite:///new.db', echo=True)
 session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 Base = declarative_base()
 
+#logging settings
+home = os.path.expanduser("~")
+full_log_path = os.path.join(home, '.localdatabase.log')
+full_log_path = os.path.join(home, '.localdatabase.log')
+logging.basicConfig(filename=full_log_path, level=logging.INFO,  format='%(asctime)s - %(levelname)s - %(message)s')
+'''
+logger = logging.getLogger()
+
+hdlr = logging.FileHandler(full_log_path) #join
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+hdlr.setFormatter(formatter)
+logger.addHandler(hdlr)
+logger.setLevel(logging.INFO)
+'''
 # define variables
 key_words = ['AI', 'algoritms', 'aws', 'bash', 'c', 'c++', 'cryptography',
  'django', 'docker', 'english', 'flask', 'freebsd', 'go', 'golang',
@@ -77,12 +91,13 @@ def get_exist_files():
     retyrn type: list
     '''
     exist_list = []
+    logging.info('I create empty exist_list!')
     for row in session.query(InfoFile).order_by(InfoFile.id):
         exist_list.append(row.full_path)
-        
+    logging.info("I return exist_list")
     return exist_list
-    
-    
+
+
 '''
 class Technology2(BaseModel):
     tecnology = CharField(default=None, null=True)
@@ -109,11 +124,10 @@ def get_hash(fname):
 def add_values(farray, exist_list):
     #проверяем, стоит ли вообще файл парсить.
     new_files = []
-    
-    
+
     for fname in farray:
         if fname in exist_list:
-            print("ёба")
+            logging.info('{} exist in database'.format(fname))
         else:
             next_step = False
             for i in enable_extension:
@@ -121,8 +135,6 @@ def add_values(farray, exist_list):
                     next_step = True
 
             if next_step is True:
-                #print(fname)
-
                 new_value = InfoFile(
                     name = fname.split('/')[-1],
                     full_path = fname,
@@ -137,15 +149,17 @@ def add_values(farray, exist_list):
                                     )
                 #если размер нулевой, ибо у меня есть битые файлы, не пишем, либо пишем в отдельную таблицу. где только путь
                 if new_value.file_size == 0:
-                    print('no added {}'.format(new_value.name)) #TODOS logging
+                    logging.warning('Zero file size. No added {}'.format(new_value.name))
                 else:
                     #new_value.save() # this is from peewe
                     new_files.append(new_value)
+                    logging.info('success add filedata from {} in session'.format(new_value.name))
 
         for i in new_files:
             session.add(i)
 
     session.commit()
+    logging.info('success commit session')
 
 '''
         new_value2 = Book(
@@ -158,7 +172,6 @@ def add_values(farray, exist_list):
 if __name__ == '__main__':
     # Создание таблицы
     Base.metadata.create_all(engine)
-    
     exist_list = get_exist_files()
 
     dir_path = sys.argv[1]

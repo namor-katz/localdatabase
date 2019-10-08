@@ -5,8 +5,9 @@
 #
 #  Copyright 2018 roman <roman@roman-pc>
 # берем список файлов, получаем абс пути, получаем хэши
-# TODO: держим в памяти имя файла хэш. кэш поднят из действующей дб. не. просто лист с путями
-# TODO сделать игнор как в mv, дабы большие и малые были пох.
+# TODO  unpack archive
+# include mv book?
+
 import os
 import sys
 from hashlib import md5
@@ -55,7 +56,7 @@ def get_file_type(full_path):
 def check_ru_lang(fname):
     ''' берем имя файла, проверяем все что выше ascii, если есть,
     возвращаем True, название русское, скорее всего и книга руссиш '''
-    #TODO проверять также что в тексте. рус или енгл
+    #TODO проверять также что в тексте. рус или енгл/ текст приоритетен!
     check_result = []
     for i in fname:
         if ord(i) > 128:
