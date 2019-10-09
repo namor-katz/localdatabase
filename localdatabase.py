@@ -23,17 +23,8 @@ Base = declarative_base()
 #logging settings
 home = os.path.expanduser("~")
 full_log_path = os.path.join(home, '.localdatabase.log')
-full_log_path = os.path.join(home, '.localdatabase.log')
 logging.basicConfig(filename=full_log_path, level=logging.INFO,  format='%(asctime)s - %(levelname)s - %(message)s')
-'''
-logger = logging.getLogger()
 
-hdlr = logging.FileHandler(full_log_path) #join
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-hdlr.setFormatter(formatter)
-logger.addHandler(hdlr)
-logger.setLevel(logging.INFO)
-'''
 # define variables
 key_words = ['AI', 'algoritms', 'aws', 'bash', 'c', 'c++', 'cryptography',
  'django', 'docker', 'english', 'flask', 'freebsd', 'go', 'golang',
@@ -44,7 +35,6 @@ key_words = ['AI', 'algoritms', 'aws', 'bash', 'c', 'c++', 'cryptography',
 enable_extension = ['pdf', 'doc', 'djvu', 'txt', 'odt', 'docx', 'epub']
 archive_extension = ['zip', 'rar', 'tar', '7z', 'gz', 'bz2']
 exclude_extensions = ['mp4', 'mp3']
-name_prefix = '1Sf' # для помечания уже отработанных файлов
 
 #define classes
 class InfoFile(Base):
@@ -124,7 +114,7 @@ def get_hash(fname):
 def add_values(farray, exist_list):
     #проверяем, стоит ли вообще файл парсить.
     new_files = []
-
+    file_count = 0
     for fname in farray:
         if fname in exist_list:
             logging.info('{} exist in database'.format(fname))
@@ -135,6 +125,8 @@ def add_values(farray, exist_list):
                     next_step = True
 
             if next_step is True:
+
+                #logging.info('file_count great!')
                 new_value = InfoFile(
                     name = fname.split('/')[-1],
                     full_path = fname,
@@ -153,6 +145,7 @@ def add_values(farray, exist_list):
                 else:
                     #new_value.save() # this is from peewe
                     new_files.append(new_value)
+                    file_count = file_count + 1
                     logging.info('success add filedata from {} in session'.format(new_value.name))
 
         for i in new_files:
@@ -160,6 +153,7 @@ def add_values(farray, exist_list):
 
     session.commit()
     logging.info('success commit session')
+    print('добавлено файлов: {}'.format(file_count))
 
 '''
         new_value2 = Book(
