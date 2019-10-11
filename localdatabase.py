@@ -13,6 +13,7 @@ from sqlalchemy import create_engine
 from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey,  Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import scoped_session, sessionmaker
+from sqlalchemy.sql import func
 
 #created db
 engine = create_engine('sqlite:///new.db', echo=True)
@@ -87,6 +88,9 @@ def get_exist_files():
     logging.info("I return exist_list")
     return exist_list
 
+
+def get_count_book():
+    return session.query(func.max(InfoFile.id)).scalar()
 
 '''
 class Technology2(BaseModel):

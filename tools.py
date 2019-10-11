@@ -13,7 +13,8 @@ import sys
 from hashlib import md5
 import magic
 import PyPDF2
-from localdatabase import key_words
+# from localdatabase import key_words
+
 
 # works files
 def return_hash_file(fname):
@@ -41,7 +42,7 @@ def get_file_size(full_path):
 
 
 def get_file_type(full_path):
-    ''' 
+    '''
     принять полный путь, вернуть тип файла.
     если не получилось - вернуть отсутствие значения
     хуевенько как то оно определяет. возможно, надо будет поменять
@@ -49,14 +50,14 @@ def get_file_type(full_path):
     try:
         file_type = magic.Magic(mime=True).from_file(full_path)
         return file_type
-    except:
+    except Exception:
         return None
 
 
 def check_ru_lang(fname):
     ''' берем имя файла, проверяем все что выше ascii, если есть,
     возвращаем True, название русское, скорее всего и книга руссиш '''
-    #TODO проверять также что в тексте. рус или енгл/ текст приоритетен!
+    # TODO проверять также что в тексте. рус или енгл/ текст приоритетен!
     check_result = []
     for i in fname:
         if ord(i) > 128:
@@ -78,15 +79,13 @@ def get_file_content(fname):
             info = pdf.getDocumentInfo()
             number_of_pages = pdf.getNumPages()
             return info.title, number_of_pages
-    except:
+    except Exception:
         return None, None
 
 
-#мдя. вот чего прлетит первое, то и впишет. (
+# мдя. вот чего прлетит первое, то и впишет. (
 def get_tag(fname):
-    for i in key_words:
-        if i in fname:
-            return i
+    pass
 
 
 if __name__ == '__main__':
@@ -103,4 +102,4 @@ if __name__ == '__main__':
             if os.path.exists(file_path):
                 main_list.append(file_path)
 '''
-    #print(len(main_list))
+    print(len(main_list))
